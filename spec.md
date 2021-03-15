@@ -6,22 +6,16 @@ flat\_fs is a filesystem designed to be as simple to implement as possible and t
 
 A flat\_fs image is composed of sectors, each 512 bytes in size. Every structure in a flat\_fs image has to be sector-aligned.
 
-## 2. First sector(Offset `0`)
+## 2. First sector
 
 This sector is usually called the boot sector, as when the image contains an OS, it is loaded by the computer on boot time. To be able to easily boot from it, all the necessary information is stored at the last 20 bytes of this sector:
 
-|: Offset :|: Size(bytes) :|: Description                            :|
-|----------|---------------|------------------------------------------|
-|`0x1EC`   | 8             | 64-bit LBA address of the root directory |
-|`0x1F4`   | 8             | Partition size in sectors                |
-|`0x1FC`   | 2             | 64-bit LBA address of the root directory |
-
-```
-  - (8 bytes) Next sector address
-  - (8 bytes) Partition size(again, in blocks)
-  - (2 bytes) FLAT_FS signature(0xF147)
-  - (2 bytes) Boot signature
-```
+| Offset | Size(bytes) | Description                              |
+|--------|-------------|------------------------------------------|
+|`0x1EC` | 8           | 64-bit LBA address of the root directory |
+|`0x1F4` | 8           | Partition size in sectors                |
+|`0x1FC` | 2           | flat\_fs signature(`0xF147`)             |
+|`0x1FE` | 2           | Boot signature(`0xAA55`)                 |
 
 ## 3. Structure
 
