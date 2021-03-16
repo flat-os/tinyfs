@@ -1,4 +1,5 @@
 # flat\_fs specification
+(revision r02, 16/03/2021)
 
 ## 1. Description
 
@@ -47,16 +48,18 @@ The rest of the image is divided in dynamically-sized blocks, but they cannot be
 
 Files are the simplest type of entry in flat\_fs. They just store the file contents in the block and, if needed, in one or more continuation blocks.
 
-#### File data:
+#### File/dir. type-dependent data:
 
 | Offset  | Size(bytes) | Description                              |
 |---------|-------------|------------------------------------------|
-| `0x000` | 480         | Filename(NULL-terminated)                |
-| `0x1E0` | 8           | File size(in bytes)                      |
-| `0x1E8` | 4           | Creation date since year 2000 in seconds |
-| `0x1EC` | 2           | Metadata(see table below)                |
+| `0x000` | 460         | Filename(NULL-terminated)                |
+| `0x1CC` | 8           | File size(in bytes)                      |
+| `0x1D4` | 8           | 64-bit UNIX atime(access time)           |
+| `0x1DC` | 8           | 64-bit UNIX mtime(modification time)     |
+| `0x1E4` | 8           | 64-bit UNIX ctime(creation time)         |
+| `0x1EC` | 2           | Attributes(see table below)              |
 
-#### File metadata:
+#### Attributes:
 
 | Offset(bits) | Size(bits) | Description                  |
 |--------------|------------|------------------------------|
@@ -68,14 +71,12 @@ Files are the simplest type of entry in flat\_fs. They just store the file conte
 
 ### 3.2. Directories
 
-Directories are special entries that are made of 64-bit offsets to more entries, with empty or deleted ones being NULL to avoid having to rearrange everything when a file is deleted.
-
-**They share the same type-dependent data structure.**
+Directories are special entries that are made of 64-bit offsets to more entries, with empty or deleted ones being NULL to avoid having to rearrange everything when a file is deleted. They share the same type-dependent data structure as files.
 
 ### 3.3. Root directory
 
-The root directory is the first entry on the image, and **has** its header in the sector sector on the image, just after the bootsector. It works in exactly the same way as regular directories, with the only difference being that they don't have any type-dependent data structure.
+The root directory is the first entry on the image, and has its header in the sector sector on the image, just after the bootsector. It works in exactly the same way as regular directories, with the only difference being that they don't have any type-dependent data structure.
 
 ## 4. License
 
-Just don't tell it's yours or do anything evil with it :).
+Just mention this file on projects where you use it and don't do anything evil with it.
