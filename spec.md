@@ -1,5 +1,7 @@
 # flat\_fs specification
-(revision r02, 16/03/2021)
+(revision r03, 24/03/2021)
+
+Warning: This revision is NOT compatible with previous ones.
 
 ## 1. Description
 
@@ -15,7 +17,7 @@ This sector is usually called the boot sector, as when the image contains an OS,
 |---------|-------------|------------------------------------------|
 | `0x1EC` | 8           | 64-bit LBA address of the root directory |
 | `0x1F4` | 8           | Partition size in sectors                |
-| `0x1FC` | 2           | flat\_fs signature(`0xF147`)             |
+| `0x1FC` | 2           | flat\_fs r03 signature(`0xF053`)         |
 | `0x1FE` | 2           | Boot signature(`0xAA55`) if bootable     |
 
 ## 3. Structure
@@ -27,7 +29,7 @@ The rest of the image is divided in dynamically-sized blocks, but they cannot be
 | Offset  | Size(bytes) | Description                                          |
 |---------|-------------|------------------------------------------------------|
 | `0x000` | 2           | Block type(see table below)                          |
-| `0x002` | 494         | Type-dependent data                                  |
+| `0x002` | 494         | File/directory data                                  |
 | `0x1F0` | 8           | Block size(in sectors)                               |
 | `0x1F8` | 8           | Continuation block header offset, NULL if not needed |
 
@@ -48,35 +50,33 @@ The rest of the image is divided in dynamically-sized blocks, but they cannot be
 
 Files are the simplest type of entry in flat\_fs. They just store the file contents in the block and, if needed, in one or more continuation blocks.
 
-#### File/dir. type-dependent data:
+#### File/dir. data:
 
-| Offset  | Size(bytes) | Description                              |
-|---------|-------------|------------------------------------------|
-| `0x000` | 460         | Filename(NULL-terminated)                |
-| `0x1CC` | 8           | File size(in bytes)                      |
-| `0x1D4` | 8           | 64-bit UNIX atime(access time)           |
-| `0x1DC` | 8           | 64-bit UNIX mtime(modification time)     |
-| `0x1E4` | 8           | 64-bit UNIX ctime(creation time)         |
-| `0x1EC` | 2           | Attributes(see table below)              |
+| Offset  | Size(bytes) | Description                     |
+|---------|-------------|---------------------------------|
+| `0x000` | 460         | Filename(NULL-terminated)       |
+| `0x1CC` | 8           | File size(in bytes)             |
+| `0x1D4` | 8           | 64-bit atime(access time)       |
+| `0x1DC` | 8           | 64-bit mtime(modification time) |
+| `0x1E4` | 8           | 64-bit ctime(creation time)     |
+| `0x1EC` | 2           | Permissions(s----rwx-----rwx)   |
 
-#### Attributes:
-
-| Offset(bits) | Size(bits) | Description                  |
-|--------------|------------|------------------------------|
-| `0x00`       | 1          | Read bit(1 if readable)      |
-| `0x01`       | 1          | Write bit(1 if writable)     |
-| `0x02`       | 1          | Execute bit(1 if executable) |
-| `0x03`       | 1          | System bit(1 if system file) |
-| `0x04`       | 12         | Unused                       |
+Note about permissions: They are NOT the same as in regular UNIX permissions as it flat\_fs is not designed with users in mind, but with a root/system level and a user level(what flat_os uses).
 
 ### 3.2. Directories
 
-Directories are special entries that are made of 64-bit offsets to more entries, with empty or deleted ones being NULL to avoid having to rearrange everything when a file is deleted. They share the same type-dependent data structure as files.
+Directories are special entries that are made of 64-bit offsets to more entries, with empty or deleted ones being NULL to avoid having to rearrange everything when a file is deleted. They share the same data structure as files.
 
 ### 3.3. Root directory
 
-The root directory is the first entry on the image, and has its header in the sector sector on the image, just after the bootsector. It works in exactly the same way as regular directories, with the only difference being that they don't have any type-dependent data structure.
+The root directory is the first entry on the image, and has its header on the second sector on the image, just after the bootsector. It works in exactly the same way as regular directories, with the only difference being that it doesn't use the directory data.
 
-## 4. License
+### 3.4. Links
 
-Just mention this file on projects where you use it and don't do anything evil with it.
+In flat\_fs, there is only a single kind of links(which would act more like symbolic links). They act as a file on which they store a 64-bit pointer to the original file's header. That means their size is fixed to 8 bytes, and the link should be ignored if otherwise.
+
+## 4. Credits & license
+
+Designed and written by segfaultdev.
+
+Just copy or mention this file on projects where you use it and do NOT do anything evil with it.
