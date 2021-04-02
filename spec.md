@@ -13,11 +13,10 @@ A flat\_fs image is composed of sectors, each 512 bytes in size. Every structure
 
 ## 2. First sector
 
-This sector is usually called the boot sector, as when the image contains an OS, it is loaded by the computer on boot time. To be able to easily boot from it, all the necessary information is stored at the last 36 bytes of this sector:
+This sector is usually called the boot sector, as when the image contains an OS, it is loaded by the computer on boot time. To be able to easily boot from it, all the necessary information is stored at the last 20 bytes of this sector:
 
 | Offset  | Size(bytes) | Description                              |
 |---------|-------------|------------------------------------------|
-| `0x1DC` | 16          | GUID of partition(if necessary)          |
 | `0x1EC` | 8           | 64-bit LBA address of the root directory |
 | `0x1F4` | 8           | Partition size in sectors                |
 | `0x1FC` | 2           | flat\_fs r04 signature(`0x7B74`)         |
