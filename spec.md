@@ -1,15 +1,13 @@
-# flat\_fs specification
-(revision r04, 02/04/2021)
+# tinyfs(flat\_fs) specification
+(revision r05, 02/04/2021)
 
-*Further revisions shall remain compatible to this one.*
-
-Warning: This revision is NOT compatible with r03+1 or older.
+*This version just updates the placement of data in the first sector to leave space for the partition entries, although that makes it incompatible with r04 and older.*
 
 ## 1. Description
 
-flat\_fs is a filesystem designed to be as simple to implement as possible and to allow easy and fast access without a virtual filesystem. It also provides features like easy resizing and 64-bit LBA addresses, allowing for up to 8 EiB per partition.
+tinyfs is a filesystem designed to be as simple to implement as possible and to allow easy and fast access without a virtual filesystem. It also provides features like easy resizing and 64-bit LBA addresses, allowing for up to 8 EiB per partition.
 
-A flat\_fs image is composed of sectors, each 512 bytes in size. Every structure in a flat\_fs image has to be sector-aligned.
+A tinyfs image is composed of sectors, each 512 bytes in size. Every structure in a tinyfs image has to be sector-aligned.
 
 ## 2. First sector
 
@@ -19,7 +17,7 @@ This sector is usually called the boot sector, as when the image contains an OS,
 |---------|-------------|------------------------------------------|
 | `0x1EC` | 8           | 64-bit LBA address of the root directory |
 | `0x1F4` | 8           | Partition size in sectors                |
-| `0x1FC` | 2           | flat\_fs r04 signature(`0x7B74`)         |
+| `0x1FC` | 2           | tinyfs r04 signature(`0xF007`)           |
 | `0x1FE` | 2           | Boot signature(`0xAA55`) if bootable     |
 
 ## 3. Structure
@@ -40,7 +38,7 @@ The rest of the image is divided in dynamically-sized blocks, but they cannot be
 | `0x1F0` | 8           | Block size(in sectors)                                |
 | `0x1F8` | 8           | Continuation block header offset, NULL if not needed  |
 
-Note about permissions: They are NOT the same as in regular UNIX permissions as it flat\_fs is not designed with users in mind, but with a root/system level and a user level.
+Note about permissions: They are NOT the same as in regular UNIX permissions as it tinyfs is not designed with users in mind, but with a root/system level and a user level.
 
 #### Types:
 
@@ -57,7 +55,7 @@ Note about permissions: They are NOT the same as in regular UNIX permissions as 
 
 ### 3.1. Files
 
-Files are the simplest type of entry in flat\_fs. They just store the file contents in the block and, if needed, in several continuation blocks.
+Files are the simplest type of entry in tinyfs. They just store the file contents in the block and, if needed, in several continuation blocks.
 
 ### 3.2. Directories
 
@@ -69,7 +67,7 @@ The root directory is the first entry on the image, and has its header on the se
 
 ### 3.4. Links
 
-In flat\_fs, there is only a single kind of links. They store the offset to the original file's header on the continuation header offset.
+In tinyfs, there is only a single kind of links. They store the offset to the original file's header on the continuation header offset.
 
 ## 4. Credits & license
 
