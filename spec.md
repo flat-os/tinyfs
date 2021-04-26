@@ -15,10 +15,10 @@ This sector is usually called the boot sector, as when the image contains an OS,
 
 | Offset  | Size(bytes) | Description                              |
 |---------|-------------|------------------------------------------|
-| `0x1EC` | 8           | 64-bit LBA address of the root directory |
-| `0x1F4` | 8           | Partition size in sectors                |
-| `0x1FC` | 2           | tinyfs r04 signature(`0xF007`)           |
-| `0x1FE` | 2           | Boot signature(`0xAA55`) if bootable     |
+| `0x1A4` | 8           | 64-bit LBA address of the root directory |
+| `0x1AC` | 8           | Partition size in sectors                |
+| `0x1B4` | 2           | tinyfs r04 signature(`0xF007`)           |
+| `0x1B6` | 2           | Boot signature(`0xAA55`) if bootable     |
 
 ## 3. Structure
 
