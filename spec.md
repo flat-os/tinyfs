@@ -17,7 +17,7 @@ This sector is usually called the boot sector, as when the image contains an OS,
 |---------|-------------|------------------------------------------|
 | `0x1A6` | 8           | 64-bit LBA address of the root directory |
 | `0x1AE` | 8           | Partition size in sectors                |
-| `0x1B6` | 2           | tinyfs r04 signature(`0xF007`)           |
+| `0x1B6` | 2           | tinyfs r05 signature(`0x1EE7`)           |
 
 ## 3. Structure
 
